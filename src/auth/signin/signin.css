@@ -1,0 +1,34 @@
+.signin-title{
+    font-weight: 600;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.wellcome-typograft{
+    font-family: sans-serif;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+.form-input-signin {
+    color: #444343;
+    padding: 10px 10px 10px 35px;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+}
+
+.input-icon {
+    color: #444343;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    left: 2.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }

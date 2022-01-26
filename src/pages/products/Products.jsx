@@ -1,6 +1,65 @@
 import Navbar from '../commonds/Navbar'
+import ElementListProduct from './commonds/ElementListProduct'
+import FormProducts from './commonds/FormProducts';
+import { useEffect, useState } from 'react';
+
+const productsList = [
+    {
+        id: 1,
+        name:'Product #1',
+        desc: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores, sequi?',
+        price: 30,
+        urlImage: 'https://e00-telva.uecdn.es/assets/multimedia/imagenes/2021/03/19/16161931772406.jpg'
+    },
+    {
+        id: 2,
+        name:'Product #2',
+        desc: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores, sequi?',
+        price: 50,
+        urlImage: 'https://e00-telva.uecdn.es/assets/multimedia/imagenes/2021/03/19/16161931772406.jpg'
+    }
+]
+
+const localProducts = JSON.parse(localStorage.getItem('products'))
 
 function Products(){
+    const [products, setProducts] = useState(localProducts || productsList)
+    const [editProducts, setEditProducts] = useState(null)
+    
+    useEffect(() => {
+        localStorage.setItem('products', JSON.stringify(products))
+    }, [products])
+
+    const productDelete = (productId) => {
+
+        if(editProducts && productId === editProducts.id){
+            setEditProducts(null)
+        }
+
+        const changedProducts = products.filter( product => product.id !== productId)
+        setProducts(changedProducts)
+    }
+    const addProducts = (product) => {
+        const newProduct = {
+            id: Date.now(),
+            ...product
+        }
+        const changedProducts = [
+            ...products,
+            newProduct
+        ] 
+        setProducts(changedProducts)
+    }
+
+    const updateProduct = (editProduct) => {
+        const changedProducts = products.map(product => (
+            product.id === editProduct.id
+            ? editProduct
+            : product
+        ))
+
+        setProducts(changedProducts)
+    }
     return(
         <div className="min-h-full">
             <Navbar/>
@@ -18,11 +77,13 @@ function Products(){
                         <div className="border-4 border-dashed border-gray-200 rounded-lg h-96">
                             <div className='flex'>
                                 <div className='w-9/12 p-2'>
-                                    <h3 className='text-2xl font-bold'>List products</h3>
+                                    <h3 className='text-2xl font-bold'>
+                                        List products
+                                    </h3>
                                     <div className='mt-2'>
 
-                                        <div className="flex flex-col">
-                                            <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                        <div className="flex flex-col p-3">
+                                            <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                 <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                                                     <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                                         <table className="min-w-full divide-y divide-gray-200">
@@ -43,34 +104,19 @@ function Products(){
                                                                 </tr>
                                                             </thead>
                                                             <tbody className="bg-white divide-y divide-gray-200">
-                                                                <tr>
-                                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                                        <div className="flex items-center">
-                                                                        <div className="flex-shrink-0 h-10 w-10">
-                                                                            <img className="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60" alt="" />
-                                                                        </div>
-                                                                        <div className="ml-4">
-                                                                            <div className="text-sm font-medium text-gray-900">
-                                                                            Product #1
-                                                                            </div>
-                                                                        </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                                        <div className="text-sm text-gray-900">Lorem ipsum dolor sit amet consectetur adipisicing.</div>
-                                                                    </td>
-                                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                                        usd 10.00
-                                                                    </td>
-                                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                            <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                                        </svg>
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                            <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                        </svg>
-                                                                    </td>
-                                                                </tr>
+                                                                {
+                                                                    products.length === 0
+                                                                    ? <tr><td>No hay productos para mostrar</td></tr>
+                                                                    : products.map(product => 
+                                                                        (
+                                                                            <ElementListProduct 
+                                                                                product={product}
+                                                                                key={product.id}
+                                                                                productDelete={productDelete}
+                                                                                setEditProducts={setEditProducts}/>
+                                                                        )
+                                                                    )
+                                                                }
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -80,26 +126,23 @@ function Products(){
                                     </div>
                                 </div>
                                 <div className='w-3/12 mt-2'>
-                                    <h3 className='text-2xl font-bold mb-3'>Add Products</h3>
-                                    <div>
-                                        <form className='p-2 border-2 border-green-100 rounded-md'>
-                                            <div className='flex flex-col my-2'>
-                                                <label htmlFor="">Name</label>
-                                                <input className='bg-gray-100 p-1' type="text" placeholder='Name product' required/>
-                                            </div>
-                                            <div className='flex flex-col my-2'>
-                                                <label htmlFor="">Description</label>
-                                                <input className='bg-gray-100 p-1' type="text" placeholder='Desc. product' required/>
-                                            </div>
-                                            <div className='flex flex-col my-2'>
-                                                <label htmlFor="">Url image</label>
-                                                <input className='bg-gray-100 p-1' type="url" placeholder='Url image' required/>
-                                            </div>
-                                            <div>
-                                                <button className='py-2 px-3 bg-green-400 transition text-gray-100 rounded-md hover:bg-green-500'>Add Product</button>
-                                            </div>
-                                        </form>
+                                    <div className='flex justify-between w-100'>
+                                        <h3 className='text-2xl font-bold'>
+                                            {editProducts ? 'Edit Product': 'Add Product'}
+                                        </h3>
+                                        {
+                                            editProducts &&
+                                            <button onClick={() => setEditProducts(null)} className="flex justify-center items-center bg-orange-300 ml-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        }
                                     </div>
+                                    <FormProducts 
+                                        addProducts={addProducts}
+                                        editProducts={editProducts}
+                                        updateProduct={updateProduct}/>
                                 </div>
                             </div>
                         </div>

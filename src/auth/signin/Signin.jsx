@@ -1,7 +1,62 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import InputUser from "./components/InputUser";
+import InputPassword from "./components/InputPassword";
 import './signin.css'
 
 function SignIn(){
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [passwordError, setPasswordError] = useState(false)
+    const [isLogin , setIsLogin] = useState(false)
+    const [hasError, setHasError] = useState(false)
+
+    let navigate = useNavigate()
+
+    const handleChange = (name, value) => {
+        if(name === 'username'){
+            //Variable para almacenar
+            setUsername(value)
+        }else{
+            if(value.length < 6){
+                setPasswordError(true)
+            }else{
+                setPasswordError(false)
+                setPassword(value)
+            }
+        }
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        let account = {username, password}
+        if(account){
+            isMatch(account)
+        }
+    }
+
+    const isMatch = (dataUser) => {
+        if(dataUser.username.length > 0 && dataUser.password.length  > 0){
+            if(dataUser.username === 'Czuluaga' && dataUser.password === 'password'){
+                const {username,password} = dataUser
+                let ac = {username,password}
+                let account = JSON.stringify(ac)
+                localStorage.setItem('account',account)
+                setIsLogin(true)
+                
+                navigate('/dashboard')     
+            }else{
+                setIsLogin(false)
+                setHasError(true)
+                setTimeout(() => {
+                    setHasError(false)
+                }, 2000);
+            }
+        }else{
+            setIsLogin(false)
+        }
+    }
+
     return (
         <section className="w-100 h-screen">
             <div className="w-100 h-screeen flex flex-col xl:flex xl:flex-row lg:flex lg:flex-row md:flex md:flex-row sm:flex sm:flex-col">
@@ -11,6 +66,12 @@ function SignIn(){
                             <div className="grid grid-col-1 flex justify-center items-center">
                                 <div className="w-96 my-14">
                                     <h2 className="text-3xl text-green-400 signin-title text-center my-6">Signin on us platform</h2>
+                                    {
+                                        hasError &&
+                                        <div className="my-2 mx-9 flex justify-center items-center bg-red-100">
+                                            <span className="font-bold text-sm text-red-500 p-2">The username or password has incorrect</span>
+                                        </div>
+                                    }
                                     <div className='flex justify-center'>
                                         <div className='mx-2 w-12 h-12 border-solid border-2 border-gray-200 rounded-full flex justify-center items-center bg-gray-100'>
                                             <svg className='w-7 h-7' viewBox="0 0 10 20" version="1.1">
@@ -44,19 +105,33 @@ function SignIn(){
                                         <span className='text-bold text-md text-gray-400'>Or use your email account</span>
                                     </div>
                                     <div className='my-12'>
-                                        <form action="">
-                                            <div className="input-wrapper">
-                                                <input type="text" className="form-input-signin w-10/12 bg-gray-100" placeholder="Username" autoFocus />
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="input-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                </svg>
-                                            </div>
-                                            <div className='input-wrapper mt-4'>
-                                                <input type="password" className="form-input-signin w-10/12 bg-gray-100" placeholder="Password" />
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="input-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                                </svg>
-                                            </div>
+                                        <form onSubmit={handleSubmit}>
+                                            <InputUser
+                                                attributes={{
+                                                    id:'username',
+                                                    name: 'username',
+                                                    type: 'text',
+                                                    placeholder: 'Username'
+                                                }}
+                                                handleChange={handleChange}
+                                            />
+                                            <InputPassword
+                                                attributes={{
+                                                    id:'password',
+                                                    name: 'password',
+                                                    type: 'password',
+                                                    placeholder: 'Password'
+                                                }}
+                                                handleChange={handleChange}
+                                                params={passwordError}
+                                            />
+                                            {
+                                                passwordError &&
+                                                <div className="my-2 mx-9 flex justify-center items-center bg-red-100">
+                                                    <span className="font-bold text-sm text-red-500 p-2">The password must contain at least six characters.</span>
+                                                </div>
+                                            }
+                                            
                                             <div className='mt-4 flex justify-center'>
                                                 <span className='cursor-pointer rounded-xl text-gray-700 text-md px-2 py-1 hover:text-gray-100 hover:bg-green-400 transition-all'>Forgot your password?</span>
                                             </div>
@@ -78,6 +153,8 @@ function SignIn(){
                                     <div className="w-11/12">
                                         <h2 className="text-4xl text-center font-bold wellcome-typograft text-gray-100 mt-6 mb-12">Hello, Friend!</h2>
                                         <p className="font-bold text-gray-100 text-center mb-8 text-lg">Enter your personal data and enyoined in us community...</p>
+                                        <p className="font-bold text-gray-100 text-center mb-8 text-lg">For access username: Czuluaga and password: password</p>
+                                        <p className="font-bold text-gray-100 text-center mb-8 text-lg">Or</p>
                                         <div className='flex justify-center'>
                                             <Link to="/signup">
                                                 <button className='w-44 border-2 border-solid border-gray-100 rounded-xl text-gray-100 py-1 hover:bg-green-600 hover:text-white'>Sign up</button>

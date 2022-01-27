@@ -10,6 +10,7 @@ import SignIn from './auth/signin/Signin';
 import Signup from './auth/signup/Signup';
 import Dashboard from './pages/dashboard/Dashboard';
 import Products from './pages/products/Products';
+import NotFound from './pages/NotFound/NotFound';
 
 const rootElement = document.getElementById("root");
 render(
@@ -21,6 +22,7 @@ render(
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/products" element={<Products />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

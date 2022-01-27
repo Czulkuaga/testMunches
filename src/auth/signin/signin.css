@@ -18,13 +18,12 @@
 .form-input-signin {
     color: #444343;
     padding: 10px 10px 10px 35px;
-    border: none;
-    outline: none;
+    /* border: none;
+    outline: none; */
     border-radius: 6px;
 }
 
 .input-icon {
-    color: #444343;
     position: absolute;
     width: 15px;
     height: 15px;
